@@ -70,9 +70,6 @@ enum Danger {
   /// 냄새
   wumpus,
 
-  // 1 + 2
-  pitchAndwumpus,
-
   gold,
 
   /// 아직 방문하지 않은 땅을 의미한다.
