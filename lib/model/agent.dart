@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import '../core/data/enums.dart';
+import '../model/map.dart';
 
 class Agent {
   Point position;
@@ -8,18 +9,17 @@ class Agent {
   bool hasGold = false;
   bool death = false;
   int arrow = 2;
+  Map map = Map();
 
-  Agent({this.direction = Direction.east, this.position = const Point(0, 0)});
+  Agent({
+    this.direction = Direction.east,
+    this.position = const Point(0, 0),
+  });
 
   void shoot() {
     // 활쏘는 로직 함수 호출
     arrow--;
   }
-}
 
-class Position {
-  int x;
-  int y;
-
-  Position({this.x = 0, this.y = 0});
+  void search() {}
 }
