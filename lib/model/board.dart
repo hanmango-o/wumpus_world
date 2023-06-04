@@ -16,7 +16,7 @@ class Board {
 
   Tile tile(Point<int> position) => tiles[position.x][position.y];
 
-  bool _notExistWumpusAndPitch(int x, int y) =>
+  bool _notExistWumPit(int x, int y) =>
       !tiles[x][y].state.contains(State.wumpus) &&
       !tiles[x][y].state.contains(State.pitch);
 
@@ -81,15 +81,13 @@ class Board {
       for (int j = 0; j < 3; j++) {
         if ((i == 3 && j == 0)) continue; //agent 시작 위치
         int randnum = Random().nextInt(10); //랜덤 난수 시작
-        if (randnum == 1 && _notExistWumpusAndPitch(i, j)) {
+        if (randnum == 1 && _notExistWumPit(i, j)) {
           //wumpus 생성
           addState(i, j, State.wumpus);
-        } else if (randnum == 2 && _notExistWumpusAndPitch(i, j)) {
+        } else if (randnum == 2 && _notExistWumPit(i, j)) {
           //pitch 생성
           addState(i, j, State.pitch);
-        } else if (randnum == 3 &&
-            notExistGold &&
-            _notExistWumpusAndPitch(i, j)) {
+        } else if (randnum == 3 && notExistGold && _notExistWumPit(i, j)) {
           //gold 생성
           addState(i, j, State.gold);
           notExistGold = false;

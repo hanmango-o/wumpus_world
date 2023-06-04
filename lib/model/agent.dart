@@ -21,6 +21,11 @@ class Agent {
     arrow--;
   }
 
+  void reBorn() {
+    direction = Direction.east;
+    position = const Point(3, 0);
+  }
+
   Future<void> search(Board originalBoard) async {
     // 현재 위치한 타일의 state를 기반으로 상하좌우의 danger 계산
     // 계산된 danger에서 safe로 이동
@@ -42,6 +47,7 @@ class Agent {
           board.updateDanger(position.x, position.y, Danger.safe);
           break;
         case State.wumpus:
+          reBorn();
         case State.pitch:
         case State.gold:
         case State.breeze:
