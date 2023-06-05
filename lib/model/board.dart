@@ -5,7 +5,7 @@ import '../core/data/enums.dart';
 
 class Board {
   List<List<Tile>> tiles =
-      List.generate(4, (x) => List.generate(4, (x) => Tile()));
+      List.generate(4, (x) => List.generate(4, (y) => Tile(Point<int>(x, y))));
 
   final List<List<int>> _dxdy = [
     [-1, 0],
@@ -32,7 +32,6 @@ class Board {
     //상하좌우 danger
 
     _dxdy.forEach((d) {
-      k.log('ddd');
       try {
         if (tiles[x + d[0]][y + d[1]].danger.contains(Danger.safe)) {
           throw e;
@@ -46,23 +45,33 @@ class Board {
     });
   }
 
-  void addState(int x, int y, State state) {
-    k.log('message');
+  List<Tile> getAroundTile(Point<int> pos) {
+    List<Tile> tiles = [];
+
+    _dxdy.forEach((d) {
+      try {
+        tiles.add(this.tiles[pos.x + d[0]][pos.y + d[1]]);
+      } catch (e) {}
+    });
+
+    return tiles;
+  }
+
+  void addState(int x, int y, State state, {bool withAround = true}) {
     switch (state) {
       case State.wumpus:
         tiles[x][y].state.add(State.wumpus);
-        _setAroundState(x, y, State.stench);
+        if (withAround) _setAroundState(x, y, State.stench);
         break;
       case State.pitch:
         tiles[x][y].state.add(State.pitch);
-        _setAroundState(x, y, State.breeze);
+        if (withAround) _setAroundState(x, y, State.breeze);
         break;
       case State.gold:
         tiles[x][y].state.add(State.gold);
-        _setAroundState(x, y, State.glitter);
+        if (withAround) _setAroundState(x, y, State.glitter);
         break;
       default:
-        k.log('asdfasdf');
         tiles[x][y].state.add(state);
         break;
     }
@@ -104,4 +113,8 @@ class Board {
 class Tile {
   List<State> state = [];
   List<Danger> danger = [Danger.unKnown];
+
+  Point<int> pos;
+
+  Tile(this.pos);
 }

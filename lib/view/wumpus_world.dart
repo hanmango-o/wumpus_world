@@ -43,6 +43,7 @@ class _WumpusWorldState extends State<WumpusWorld> {
               onPressed: () {
                 setState(() {
                   agent.search(board);
+                  agent.move();
                 });
               },
               child: Text('Start Game'),
