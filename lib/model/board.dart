@@ -1,5 +1,6 @@
 import 'dart:math';
-import 'dart:developer' as k;
+
+import 'package:wumpus_world/core/function/init.dart';
 
 import '../core/data/enums.dart';
 
@@ -7,23 +8,20 @@ class Board {
   List<List<Tile>> tiles =
       List.generate(4, (x) => List.generate(4, (y) => Tile(Point<int>(x, y))));
 
-  final List<List<int>> _dxdy = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-  ];
-
   Tile tile(Point<int> position) => tiles[position.x][position.y];
 
   bool _notExistWumPit(int x, int y) =>
       !tiles[x][y].state.contains(State.wumpus) &&
       !tiles[x][y].state.contains(State.pitch);
 
-  void _setAroundState(int x, int y, State state) {
-    _dxdy.forEach((d) {
+  void _setAroundState(int x, int y, State state, {bool remove = false}) {
+    dxdy.forEach((d) {
       try {
-        tiles[x + d[0]][y + d[1]].state.add(state);
+        if (remove) {
+          tiles[x + d[0]][y + d[1]].state.remove(state);
+        } else {
+          tiles[x + d[0]][y + d[1]].state.add(state);
+        }
       } catch (e) {}
     });
   }
@@ -31,7 +29,7 @@ class Board {
   void _setAroundDanger(int x, int y, Danger danger) {
     //상하좌우 danger
 
-    _dxdy.forEach((d) {
+    dxdy.forEach((d) {
       try {
         if (tiles[x + d[0]][y + d[1]].danger.contains(Danger.safe)) {
           throw e;
@@ -48,7 +46,7 @@ class Board {
   List<Tile> getAroundTile(Point<int> pos) {
     List<Tile> tiles = [];
 
-    _dxdy.forEach((d) {
+    dxdy.forEach((d) {
       try {
         tiles.add(this.tiles[pos.x + d[0]][pos.y + d[1]]);
       } catch (e) {}
@@ -77,7 +75,18 @@ class Board {
     }
   }
 
-  void removeState() {}
+  bool removeState(Point<int> pos, State state) {
+    bool isRemove = tiles[pos.x][pos.y].state.remove(state);
+    if (isRemove) {
+      if (state == State.wumpus) {
+        _setAroundState(pos.x, pos.y, State.stench, remove: true);
+      } else {
+        _setAroundState(pos.x, pos.y, State.glitter, remove: true);
+      }
+    }
+
+    return isRemove;
+  }
 
   void updateDanger(int x, int y, Danger danger) {
     tiles[x][y].danger = [Danger.safe];
