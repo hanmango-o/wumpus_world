@@ -1,6 +1,7 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:wumpus_world/controller/controller.dart';
 import 'package:wumpus_world/model/board.dart';
 
 import '../model/agent.dart';
@@ -13,15 +14,11 @@ class WumpusWorld extends StatefulWidget {
 }
 
 class _WumpusWorldState extends State<WumpusWorld> {
-  late Board board;
-  late Agent agent;
+  late Controller controller;
 
   @override
   void initState() {
-    board = Board();
-    agent = Agent();
-    agent.posController.add(agent.position);
-    agent.dirController.add(agent.direction);
+    controller = GameController();
     super.initState();
   }
 
@@ -39,34 +36,47 @@ class _WumpusWorldState extends State<WumpusWorld> {
                 color: Colors.amber,
                 child: Stack(
                   children: [
-                    Column(
-                      children: [
-                        _renderTile(board.tiles[0]),
-                        _renderTile(board.tiles[1]),
-                        _renderTile(board.tiles[2]),
-                        _renderTile(board.tiles[3]),
-                      ],
+                    StreamBuilder<Board>(
+                      stream: controller.mapStream.stream,
+                      initialData: controller.map,
+                      builder: (context, snapshot) {
+                        // print(snapshot.data!.tiles);
+                        return Column(
+                          children: [
+                            _renderTile(snapshot.data!.tiles[0]),
+                            _renderTile(snapshot.data!.tiles[1]),
+                            _renderTile(snapshot.data!.tiles[2]),
+                            _renderTile(snapshot.data!.tiles[3]),
+                          ],
+                        );
+                      },
                     ),
-                    StreamBuilder<Point<int>>(
-                      stream: agent.posController.stream,
-                      initialData: Point(3, 0),
+                    StreamBuilder<Agent>(
+                      stream: controller.agentStream.stream,
+                      initialData: controller.agent,
                       builder: (context, snapshot) {
                         // k.log(snapshot.data.toString());
+                        // log(snapshot.data.toString());
+
                         return AnimatedPositioned(
                           width: 50,
                           height: 50,
-                          left: 52 + 52.0 * snapshot.data!.y * 3,
-                          top: 52 + 52.0 * snapshot.data!.x * 3,
+                          left: 52 + 52.0 * snapshot.data!.pos.y * 3,
+                          top: 52 + 52.0 * snapshot.data!.pos.x * 3,
                           // left: 155.0,
                           // right: 155.0,
                           // left: boardWidth / 16 + boardWidth * x / 4,
                           // top: boardWidth / 16 + boardWidth * y / 4,
 
-                          duration: const Duration(seconds: 1),
+                          duration: const Duration(microseconds: 300),
                           // curve: Curves.fastOutSlowIn,
-                          child: const ColoredBox(
+                          child: ColoredBox(
                             color: Colors.green,
-                            child: Center(child: Text('')),
+                            child: Center(
+                              child: Text(
+                                snapshot.data!.dir.toString(),
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -75,40 +85,61 @@ class _WumpusWorldState extends State<WumpusWorld> {
                 ),
               ),
             ),
-            Divider(),
-            _renderTile2(agent.board.tiles[0]),
-            _renderTile2(agent.board.tiles[1]),
-            _renderTile2(agent.board.tiles[2]),
-            _renderTile2(agent.board.tiles[3]),
             ElevatedButton(
               onPressed: () async {
-                agent.search(board);
-                await agent.move(board);
+                await controller.startGame();
+                _showDialog();
               },
               child: Text('Start Game'),
             ),
+            Divider(),
+            // _renderTile2(agent.board.tiles[0]),
+            // _renderTile2(agent.board.tiles[1]),
+            // _renderTile2(agent.board.tiles[2]),
+            // _renderTile2(agent.board.tiles[3]),
             // StreamBuilder(
-            //   stream: agent.posController.stream,
+            //   stream: controller.direction.stream,
             //   builder: (context, snapshot) {
-            //     log(snapshot.data.toString());
             //     return Text(
             //       snapshot.data.toString(),
-            //       style: TextStyle(color: Colors.red, fontSize: 30),
+            //       style: TextStyle(color: Colors.blue, fontSize: 30),
             //     );
             //   },
             // ),
-            StreamBuilder(
-              stream: agent.dirController.stream,
-              builder: (context, snapshot) {
-                return Text(
-                  snapshot.data.toString(),
-                  style: TextStyle(color: Colors.blue, fontSize: 30),
-                );
-              },
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('I got a gold!!'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Approve'),
+              onPressed: () {
+                setState(() {
+                  controller = GameController();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
