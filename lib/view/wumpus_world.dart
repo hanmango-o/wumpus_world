@@ -15,6 +15,7 @@ class WumpusWorld extends StatefulWidget {
 
 class _WumpusWorldState extends State<WumpusWorld> {
   late Controller controller;
+  List<Agent> history = [];
 
   @override
   void initState() {
@@ -31,59 +32,80 @@ class _WumpusWorldState extends State<WumpusWorld> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            FittedBox(
-              child: Container(
-                color: Colors.amber,
-                child: Stack(
-                  children: [
-                    StreamBuilder<Board>(
-                      stream: controller.mapStream.stream,
-                      initialData: controller.map,
-                      builder: (context, snapshot) {
-                        // print(snapshot.data!.tiles);
-                        return Column(
-                          children: [
-                            _renderTile(snapshot.data!.tiles[0]),
-                            _renderTile(snapshot.data!.tiles[1]),
-                            _renderTile(snapshot.data!.tiles[2]),
-                            _renderTile(snapshot.data!.tiles[3]),
-                          ],
-                        );
-                      },
-                    ),
-                    StreamBuilder<Agent>(
-                      stream: controller.agentStream.stream,
-                      initialData: controller.agent,
-                      builder: (context, snapshot) {
-                        // k.log(snapshot.data.toString());
-                        // log(snapshot.data.toString());
-
-                        return AnimatedPositioned(
-                          width: 50,
-                          height: 50,
-                          left: 52 + 52.0 * snapshot.data!.pos.y * 3,
-                          top: 52 + 52.0 * snapshot.data!.pos.x * 3,
-                          // left: 155.0,
-                          // right: 155.0,
-                          // left: boardWidth / 16 + boardWidth * x / 4,
-                          // top: boardWidth / 16 + boardWidth * y / 4,
-
-                          duration: const Duration(microseconds: 300),
-                          // curve: Curves.fastOutSlowIn,
-                          child: ColoredBox(
-                            color: Colors.green,
-                            child: Center(
-                              child: Text(
-                                snapshot.data!.dir.toString(),
-                              ),
-                            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: FittedBox(
+                    child: Container(
+                      color: Colors.amber,
+                      child: Stack(
+                        children: [
+                          StreamBuilder<Board>(
+                            stream: controller.mapStream.stream,
+                            initialData: controller.map,
+                            builder: (context, snapshot) {
+                              // print(snapshot.data!.tiles);
+                              return Column(
+                                children: [
+                                  _renderTile(snapshot.data!.tiles[0]),
+                                  _renderTile(snapshot.data!.tiles[1]),
+                                  _renderTile(snapshot.data!.tiles[2]),
+                                  _renderTile(snapshot.data!.tiles[3]),
+                                ],
+                              );
+                            },
                           ),
-                        );
-                      },
+                          StreamBuilder<Agent>(
+                            stream: controller.agentStream.stream,
+                            initialData: controller.agent,
+                            builder: (context, snapshot) {
+                              return AnimatedPositioned(
+                                width: 50,
+                                height: 50,
+                                left: 52 + 52.0 * snapshot.data!.pos.y * 3,
+                                top: 52 + 52.0 * snapshot.data!.pos.x * 3,
+
+                                duration: const Duration(microseconds: 300),
+                                // curve: Curves.fastOutSlowIn,
+                                child: ColoredBox(
+                                  color: Colors.green,
+                                  child: Center(
+                                    child: Text(
+                                      snapshot.data!.dir.toString(),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                // Flexible(
+                //   flex: 1,
+                //   child: Container(
+                //     // color: Colors.amber,
+                //     height: 640,
+                //     child: StreamBuilder(
+                //       initialData: controller.agent,
+                //       stream: controller.agentStream.stream,
+                //       builder: (context, snapshot) {
+                //         history.add(snapshot.data!);
+                //         print(history.toString());
+                //         return ListView(
+                //           children: history
+                //               .map((agent) => Text(agent.toString()))
+                //               .toList(),
+                //         );
+                //       },
+                //     ),
+                //   ),
+                // ),
+              ],
             ),
             ElevatedButton(
               onPressed: () async {
@@ -92,20 +114,6 @@ class _WumpusWorldState extends State<WumpusWorld> {
               },
               child: Text('Start Game'),
             ),
-            Divider(),
-            // _renderTile2(agent.board.tiles[0]),
-            // _renderTile2(agent.board.tiles[1]),
-            // _renderTile2(agent.board.tiles[2]),
-            // _renderTile2(agent.board.tiles[3]),
-            // StreamBuilder(
-            //   stream: controller.direction.stream,
-            //   builder: (context, snapshot) {
-            //     return Text(
-            //       snapshot.data.toString(),
-            //       style: TextStyle(color: Colors.blue, fontSize: 30),
-            //     );
-            //   },
-            // ),
           ],
         ),
       ),

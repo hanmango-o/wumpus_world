@@ -68,9 +68,9 @@ class Agent {
       }
     }
 
-    Tile currentTile = board.getTile(pos);
+    Tile cTile = board.getTile(pos);
 
-    currentTile.state.toSet().forEach((state) {
+    cTile.state.toSet().forEach((state) {
       switch (state) {
         case State.wumpus || State.pitch:
           death();

@@ -1,22 +1,22 @@
 import 'dart:async';
-import 'dart:math';
-
-import '../core/data/enums.dart';
 import '../model/agent.dart';
 import '../model/board.dart';
 
 abstract class Controller {
   // StreamController<Point<int>> posStream = StreamController();
-  StreamController<Agent> agentStream = StreamController();
+  StreamController<Agent> agentStream = StreamController.broadcast();
   StreamController<Board> mapStream = StreamController();
+  StreamController<List<Agent>> historyStream = StreamController();
 
   final Agent agent = Agent();
   final Board map = Board();
+  List<Agent> history = [];
 
   Controller() {
     agentStream.add(agent);
     // dirStream.add(agent.dir);
     mapStream.add(map);
+    historyStream.add(history);
   }
 
   Future<void> startGame();

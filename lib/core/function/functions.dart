@@ -84,6 +84,7 @@ Map<State, Danger> dangerMap = {
   } else if (pitchTarget != null) {
     return (Danger.pitch, pitchTarget.pos);
   } else {
+    print('이게 맞아?');
     return (Danger.safe, const Point(3, 0));
   }
 }
@@ -156,15 +157,15 @@ void setAroundStateFunc(
   int x,
   int y,
   State state,
-  List<List<Tile>> tiles, {
+  Board board, {
   bool remove = false,
 }) {
   dxdy.forEach((d) {
     try {
       if (remove) {
-        tiles[x + d[0]][y + d[1]].state.remove(state);
+        board.tiles[x + d[0]][y + d[1]].state.remove(state);
       } else {
-        tiles[x + d[0]][y + d[1]].state.add(state);
+        board.tiles[x + d[0]][y + d[1]].state.add(state);
       }
     } catch (e) {}
   });
