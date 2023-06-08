@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:wumpus_world/view/wumpus_world.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isMacOS) {
-    // set
+    await DesktopWindow.setFullScreen(true);
   }
   runApp(const App());
 }
