@@ -8,11 +8,13 @@ abstract class Controller {
   StreamController<Board> mapStream = StreamController();
   StreamController<List<Agent>> historyStream = StreamController();
 
-  final Agent agent = Agent();
-  final Board map = Board();
+  late Agent agent;
+  late Board map;
   List<Agent> history = [];
 
   Controller() {
+    agent = Agent();
+    map = Board();
     agentStream.add(agent);
     // dirStream.add(agent.dir);
     mapStream.add(map);

@@ -1,7 +1,9 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wumpus_world/controller/controller.dart';
 import 'package:wumpus_world/model/board.dart';
+import 'package:wumpus_world/view/widgets/agent_element.dart';
+import 'package:wumpus_world/view/widgets/tile_element.dart';
 
 import '../model/agent.dart';
 
@@ -27,94 +29,128 @@ class _WumpusWorldState extends State<WumpusWorld> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wumpus World'),
+        centerTitle: false,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  flex: 3,
-                  child: FittedBox(
-                    child: Container(
-                      color: Colors.amber,
-                      child: Stack(
-                        children: [
-                          StreamBuilder<Board>(
-                            stream: controller.mapStream.stream,
-                            initialData: controller.map,
-                            builder: (context, snapshot) {
-                              // print(snapshot.data!.tiles);
-                              return Column(
-                                children: [
-                                  _renderTile(snapshot.data!.tiles[0]),
-                                  _renderTile(snapshot.data!.tiles[1]),
-                                  _renderTile(snapshot.data!.tiles[2]),
-                                  _renderTile(snapshot.data!.tiles[3]),
-                                ],
-                              );
-                            },
-                          ),
-                          StreamBuilder<Agent>(
-                            stream: controller.agentStream.stream,
-                            initialData: controller.agent,
-                            builder: (context, snapshot) {
-                              return AnimatedPositioned(
-                                width: 50,
-                                height: 50,
-                                left: 52 + 52.0 * snapshot.data!.pos.y * 3,
-                                top: 52 + 52.0 * snapshot.data!.pos.x * 3,
+      body: Row(
+        children: [
+          Flexible(
+            flex: 3,
+            child: Container(
+              height: double.infinity,
+              color: Color.fromARGB(255, 255, 255, 255),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: constraints.maxHeight,
+                        width: constraints.maxHeight,
+                        child: Stack(
+                          children: [
+                            StreamBuilder<Board>(
+                              stream: controller.mapStream.stream,
+                              initialData: controller.map,
+                              builder: (context, snapshot) {
+                                // print(snapshot.data!.tiles);
+                                return GridView.count(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 4,
+                                  mainAxisSpacing: 5,
+                                  crossAxisSpacing: 5,
+                                  children: snapshot.data!.tiles
+                                      .expand((List<Tile> row) => row)
+                                      .toList()
+                                      .map((tile) {
+                                    return TileElement(tile: tile);
+                                  }).toList(),
+                                );
+                              },
+                            ),
+                            StreamBuilder<Agent>(
+                              stream: controller.agentStream.stream,
+                              initialData: controller.agent,
+                              builder: (context, snapshot) {
+                                return AnimatedPositioned(
+                                  width: constraints.maxHeight / 5,
+                                  height: constraints.maxHeight / 5,
+                                  left: (constraints.maxHeight - 10) /
+                                          4 *
+                                          snapshot.data!.pos.y +
+                                      (constraints.maxHeight - 10) / 8 -
+                                      constraints.maxHeight / 10 +
+                                      5 * snapshot.data!.pos.y,
+                                  top: (constraints.maxHeight - 10) /
+                                          4 *
+                                          snapshot.data!.pos.x +
+                                      (constraints.maxHeight - 10) / 8 -
+                                      constraints.maxHeight / 10 +
+                                      2.5 * snapshot.data!.pos.x,
 
-                                duration: const Duration(microseconds: 300),
-                                // curve: Curves.fastOutSlowIn,
-                                child: ColoredBox(
-                                  color: Colors.green,
-                                  child: Center(
-                                    child: Text(
-                                      snapshot.data!.dir.toString(),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                                  duration: const Duration(microseconds: 300),
+                                  // curve: Curves.fastOutSlowIn,
+                                  child: AgentElement(agent: snapshot.data!),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Container(
+              height: double.infinity,
+              // color: Colors.black,
+              child: LayoutBuilder(builder: (context, constraints) {
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          ListTile(
+                            title: Text('ddd'),
+                            subtitle: Text('dd'),
+                            leading: Icon(Icons.directions_walk),
+                            trailing: Icon(Icons.ac_unit),
                           ),
+                          ListTile(
+                            title: Text('ddd'),
+                            subtitle: Text('dd'),
+                            // leading: Icon(CupertinoIcons.arrow),
+                            trailing: Icon(Icons.ac_unit),
+                          ),
+                          Text('d'),
+                          Text('d'),
+                          Text('d'),
+                          Text('d'),
                         ],
                       ),
                     ),
-                  ),
-                ),
-                // Flexible(
-                //   flex: 1,
-                //   child: Container(
-                //     // color: Colors.amber,
-                //     height: 640,
-                //     child: StreamBuilder(
-                //       initialData: controller.agent,
-                //       stream: controller.agentStream.stream,
-                //       builder: (context, snapshot) {
-                //         history.add(snapshot.data!);
-                //         print(history.toString());
-                //         return ListView(
-                //           children: history
-                //               .map((agent) => Text(agent.toString()))
-                //               .toList(),
-                //         );
-                //       },
-                //     ),
-                //   ),
-                // ),
-              ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(constraints.maxWidth, 50),
+                        ),
+                        onPressed: () async {
+                          await controller.startGame();
+                          _showDialog();
+                        },
+                        child: Text('Start Game'),
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                await controller.startGame();
-                _showDialog();
-              },
-              child: const Text('Start Game'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -138,31 +174,12 @@ class _WumpusWorldState extends State<WumpusWorld> {
             TextButton(
               child: const Text('Approve'),
               onPressed: () {
-                setState(() {
-                  controller = GameController();
-                });
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               },
             ),
           ],
         );
       },
-    );
-  }
-
-  Widget _renderTile(List<Tile> list) {
-    return Row(
-      children: list
-          .map(
-            (tile) => Container(
-              margin: const EdgeInsets.all(4.0),
-              height: 150,
-              width: 150,
-              color: Colors.blue,
-              child: Text(tile.state.toString()),
-            ),
-          )
-          .toList(),
     );
   }
 }
