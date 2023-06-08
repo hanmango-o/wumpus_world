@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:math';
 
 import 'package:wumpus_world/core/function/functions.dart';
@@ -44,11 +46,11 @@ class Board {
   List<Tile> getAroundTiles(Point<int> pos) {
     List<Tile> tiles = [];
 
-    dxdy.forEach((d) {
+    for (List<int> d in dxdy) {
       try {
         tiles.add(this.tiles[pos.x + d[0]][pos.y + d[1]]);
       } catch (e) {}
-    });
+    }
 
     return tiles;
   }

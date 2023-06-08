@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:collection';
 import 'dart:math';
 
@@ -11,17 +13,17 @@ const List<List<int>> dxdy = [
   [0, 1],
 ];
 
-Map<State, State> stateMap = {
+const Map<State, State> stateMap = {
   State.wumpus: State.stench,
   State.pitch: State.breeze,
   State.gold: State.glitter,
 };
 
-Map<State, Danger> dangerMap = {
+const Map<State, Danger> dangerMap = {
   State.safe: Danger.safe,
   State.stench: Danger.wumpus,
   State.breeze: Danger.pitch,
-  State.glitter: Danger.gold
+  State.glitter: Danger.gold,
 };
 
 (Danger, Point<int>) getPossiblePosFunc(Board board, Point<int> pos) {
@@ -84,7 +86,6 @@ Map<State, Danger> dangerMap = {
   } else if (pitchTarget != null) {
     return (Danger.pitch, pitchTarget.pos);
   } else {
-    print('이게 맞아?');
     return (Danger.safe, const Point(3, 0));
   }
 }
@@ -160,7 +161,7 @@ void setAroundStateFunc(
   Board board, {
   bool remove = false,
 }) {
-  dxdy.forEach((d) {
+  for (List<int> d in dxdy) {
     try {
       if (remove) {
         board.tiles[x + d[0]][y + d[1]].state.remove(state);
@@ -168,7 +169,7 @@ void setAroundStateFunc(
         board.tiles[x + d[0]][y + d[1]].state.add(state);
       }
     } catch (e) {}
-  });
+  }
 }
 
 bool checkNotExistWumPitFunc(int x, int y, List<List<Tile>> tiles) =>
@@ -177,16 +178,14 @@ bool checkNotExistWumPitFunc(int x, int y, List<List<Tile>> tiles) =>
 
 void setAroundDangerFunc(int x, int y, Danger danger, List<List<Tile>> tiles) {
   //상하좌우 danger
-  dxdy.forEach((d) {
+  for (List<int> d in dxdy) {
     try {
       if (tiles[x + d[0]][y + d[1]].danger.contains(Danger.safe)) {
         throw e;
       } else if (tiles[x + d[0]][y + d[1]].danger.contains(Danger.unKnown)) {
-        tiles[x + d[0]][y + d[1]].danger.clear();
+        tiles[x + d[0]][y + d[1]].danger = [];
       }
       tiles[x + d[0]][y + d[1]].danger.add(danger);
-    } catch (e) {
-      print(e);
-    }
-  });
+    } catch (e) {}
+  }
 }

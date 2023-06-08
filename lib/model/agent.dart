@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:developer' as k;
 
 import 'package:wumpus_world/core/function/functions.dart';
 
@@ -63,7 +62,7 @@ class Agent {
     if (oTile.state.isEmpty) {
       board.addState(pos.x, pos.y, State.safe, withAround: false);
     } else {
-      for (var state in oTile.state) {
+      for (State state in oTile.state) {
         board.addState(pos.x, pos.y, state, withAround: false);
       }
     }
@@ -81,7 +80,7 @@ class Agent {
           board.removeState(pos, State.gold);
           mapStream.add(oBoard);
           break;
-        default:
+        case State.safe || State.breeze || State.stench || State.glitter:
           board.updateDanger(pos.x, pos.y, dangerMap[state]!);
           break;
       }
@@ -113,6 +112,6 @@ class Agent {
 
   @override
   String toString() {
-    return 'current position : ' + pos.toString();
+    return 'current position : $pos';
   }
 }

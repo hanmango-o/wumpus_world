@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:wumpus_world/controller/controller.dart';
@@ -27,7 +26,7 @@ class _WumpusWorldState extends State<WumpusWorld> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wumpus World'),
+        title: const Text('Wumpus World'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -112,7 +111,7 @@ class _WumpusWorldState extends State<WumpusWorld> {
                 await controller.startGame();
                 _showDialog();
               },
-              child: Text('Start Game'),
+              child: const Text('Start Game'),
             ),
           ],
         ),
@@ -156,32 +155,11 @@ class _WumpusWorldState extends State<WumpusWorld> {
       children: list
           .map(
             (tile) => Container(
-              margin: EdgeInsets.all(4.0),
+              margin: const EdgeInsets.all(4.0),
               height: 150,
               width: 150,
               color: Colors.blue,
               child: Text(tile.state.toString()),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _renderTile2(List<Tile> list) {
-    return Row(
-      children: list
-          .map(
-            (tile) => Container(
-              margin: EdgeInsets.all(5.0),
-              height: 150,
-              width: 150,
-              color: Colors.amber,
-              child: Column(
-                children: [
-                  Text(tile.danger.toString()),
-                  Text(tile.state.toString()),
-                ],
-              ),
             ),
           )
           .toList(),
