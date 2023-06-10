@@ -6,99 +6,96 @@ import 'package:wumpus_world/view/widgets/arrow_element.dart';
 import '../../model/agent.dart';
 
 class AgentElement extends StatelessWidget {
-  Agent agent;
+  final Agent agent;
 
-  AgentElement({super.key, required this.agent});
+  const AgentElement({super.key, required this.agent});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.green,
-      child: LayoutBuilder(builder: (context, constraints) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Flexible(
-                flex: 2,
-                child: Visibility(
-                  visible: agent.dir == Direction.north,
-                  child: Container(
-                    width: constraints.maxWidth,
-                    child: CustomPaint(
-                      size: Size(
-                        constraints.maxWidth,
-                        constraints.maxHeight,
-                      ),
-                      painter: ArrowNorthShape(),
+    return LayoutBuilder(builder: (context, constraints) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              flex: 2,
+              child: Visibility(
+                visible: agent.dir == Direction.north,
+                child: SizedBox(
+                  width: constraints.maxWidth,
+                  child: CustomPaint(
+                    size: Size(
+                      constraints.maxWidth,
+                      constraints.maxHeight,
                     ),
+                    painter: ArrowNorthShape(agent),
                   ),
                 ),
               ),
-              Flexible(
-                flex: 10,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: Visibility(
-                        visible: agent.dir == Direction.west,
-                        child: Container(
-                          height: constraints.maxHeight,
-                          child: CustomPaint(
-                            size: Size(
-                              constraints.maxWidth,
-                              constraints.maxHeight,
-                            ),
-                            painter: ArrowWestShape(),
+            ),
+            Flexible(
+              flex: 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Visibility(
+                      visible: agent.dir == Direction.west,
+                      child: SizedBox(
+                        height: constraints.maxHeight,
+                        child: CustomPaint(
+                          size: Size(
+                            constraints.maxWidth,
+                            constraints.maxHeight,
                           ),
+                          painter: ArrowWestShape(agent),
                         ),
                       ),
                     ),
-                    Image.asset(
-                      Images.AGENT,
-                      height: constraints.maxHeight,
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: Visibility(
-                        visible: agent.dir == Direction.east,
-                        child: Container(
-                          height: constraints.maxHeight,
-                          child: CustomPaint(
-                            size: Size(
-                              constraints.maxWidth,
-                              constraints.maxHeight,
-                            ),
-                            painter: ArrowEastShape(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Visibility(
-                  visible: agent.dir == Direction.south,
-                  child: Container(
+                  ),
+                  Image.asset(
+                    Images.AGENT,
                     height: constraints.maxHeight,
-                    child: CustomPaint(
-                      size: Size(
-                        constraints.maxWidth,
-                        constraints.maxHeight,
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: Visibility(
+                      visible: agent.dir == Direction.east,
+                      child: SizedBox(
+                        height: constraints.maxHeight,
+                        child: CustomPaint(
+                          size: Size(
+                            constraints.maxWidth,
+                            constraints.maxHeight,
+                          ),
+                          painter: ArrowEastShape(agent),
+                        ),
                       ),
-                      painter: ArrowSouthShape(),
                     ),
+                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              flex: 2,
+              child: Visibility(
+                visible: agent.dir == Direction.south,
+                child: SizedBox(
+                  height: constraints.maxHeight,
+                  child: CustomPaint(
+                    size: Size(
+                      constraints.maxWidth,
+                      constraints.maxHeight,
+                    ),
+                    painter: ArrowSouthShape(agent),
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      }),
-    );
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

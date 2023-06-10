@@ -1,6 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:wumpus_world/controller/controller.dart';
+import 'package:wumpus_world/core/data/assets.dart';
+import 'package:wumpus_world/core/data/enums.dart' as e;
 import 'package:wumpus_world/model/board.dart';
 import 'package:wumpus_world/view/widgets/agent_element.dart';
 import 'package:wumpus_world/view/widgets/tile_element.dart';
@@ -15,12 +18,13 @@ class WumpusWorld extends StatefulWidget {
 }
 
 class _WumpusWorldState extends State<WumpusWorld> {
-  late Controller controller;
+  late Controller game;
   List<Agent> history = [];
+  bool playing = false;
 
   @override
   void initState() {
-    controller = GameController();
+    game = GameController();
     super.initState();
   }
 
@@ -30,6 +34,8 @@ class _WumpusWorldState extends State<WumpusWorld> {
       appBar: AppBar(
         title: const Text('Wumpus World'),
         centerTitle: false,
+        backgroundColor: Color.fromARGB(255, 0, 0, 0),
+        // foregroundColor: Color.fromARGB(215, 135, 124, 75),
       ),
       body: Row(
         children: [
@@ -37,24 +43,24 @@ class _WumpusWorldState extends State<WumpusWorld> {
             flex: 3,
             child: Container(
               height: double.infinity,
-              color: Color.fromARGB(255, 255, 255, 255),
+              // color: Color.fromARGB(255, 0, 0, 0),
+              color: Color.fromARGB(255, 29, 26, 20),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                      child: SizedBox(
                         height: constraints.maxHeight,
                         width: constraints.maxHeight,
                         child: Stack(
                           children: [
                             StreamBuilder<Board>(
-                              stream: controller.mapStream.stream,
-                              initialData: controller.map,
+                              stream: game.mapStream.stream,
+                              initialData: game.map,
                               builder: (context, snapshot) {
-                                // print(snapshot.data!.tiles);
                                 return GridView.count(
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   crossAxisCount: 4,
                                   mainAxisSpacing: 5,
                                   crossAxisSpacing: 5,
@@ -68,8 +74,29 @@ class _WumpusWorldState extends State<WumpusWorld> {
                               },
                             ),
                             StreamBuilder<Agent>(
-                              stream: controller.agentStream.stream,
-                              initialData: controller.agent,
+                              stream: game.agentStream.stream,
+                              initialData: game.agent,
+                              builder: (context, snapshot) {
+                                return GridView.count(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 4,
+                                  mainAxisSpacing: 5,
+                                  crossAxisSpacing: 5,
+                                  children: snapshot.data!.board.tiles
+                                      .expand((List<Tile> row) => row)
+                                      .toList()
+                                      .map((tile) {
+                                    return TileElement(
+                                      tile: tile,
+                                      shadow: true,
+                                    );
+                                  }).toList(),
+                                );
+                              },
+                            ),
+                            StreamBuilder<Agent>(
+                              stream: game.agentStream.stream,
+                              initialData: game.agent,
                               builder: (context, snapshot) {
                                 return AnimatedPositioned(
                                   width: constraints.maxHeight / 5,
@@ -105,49 +132,231 @@ class _WumpusWorldState extends State<WumpusWorld> {
           Flexible(
             flex: 1,
             child: Container(
+              // color: Color.fromARGB(255, 0, 0, 0),
               height: double.infinity,
-              // color: Colors.black,
-              child: LayoutBuilder(builder: (context, constraints) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
+              child: StreamBuilder(
+                  stream: game.agentStream.stream,
+                  initialData: game.agent,
+                  builder: (context, snapshot) {
+                    return LayoutBuilder(builder: (context, constraints) {
+                      return Column(
                         children: [
-                          ListTile(
-                            title: Text('ddd'),
-                            subtitle: Text('dd'),
-                            leading: Icon(Icons.directions_walk),
-                            trailing: Icon(Icons.ac_unit),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: constraints.maxHeight / 100,
+                              ),
+                              Container(
+                                color: Colors.grey[300],
+                                height: constraints.maxHeight * 0.21,
+                                child: Image.asset(
+                                  Images.AGENT,
+                                  width: constraints.maxWidth / 2.5,
+                                  height: constraints.maxHeight / 4,
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: constraints.maxHeight / 4,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: constraints.maxHeight / 10,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              color: Colors.grey[300],
+                                              padding: EdgeInsets.all(8),
+                                              width: constraints.maxHeight / 10,
+                                              height:
+                                                  constraints.maxHeight / 10,
+                                              child: snapshot.data!.arrow > 0
+                                                  ? Image.asset(Images.ARROW)
+                                                  : Icon(
+                                                      Icons.close,
+                                                      color: Colors.grey,
+                                                      size: constraints
+                                                              .maxHeight /
+                                                          25,
+                                                    ),
+                                            ),
+                                            SizedBox(
+                                              width:
+                                                  constraints.maxHeight / 100,
+                                            ),
+                                            Container(
+                                              color: Colors.grey[300],
+                                              padding: EdgeInsets.all(8),
+                                              width: constraints.maxHeight / 10,
+                                              height:
+                                                  constraints.maxHeight / 10,
+                                              child: snapshot.data!.arrow > 1
+                                                  ? Image.asset(Images.ARROW)
+                                                  : Icon(
+                                                      Icons.close,
+                                                      color: Colors.grey,
+                                                      size: constraints
+                                                              .maxHeight /
+                                                          25,
+                                                    ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: constraints.maxHeight / 100,
+                                      ),
+                                      Container(
+                                        height: constraints.maxHeight / 10,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              color: Colors.grey[300],
+                                              padding: EdgeInsets.all(8),
+                                              width: constraints.maxHeight / 5 +
+                                                  10,
+                                              height:
+                                                  constraints.maxHeight / 10,
+                                              child: snapshot.data!.hasGold
+                                                  ? Image.asset(Images.GOLD)
+                                                  : Icon(
+                                                      Icons.close,
+                                                      color: Colors.grey,
+                                                      size: constraints
+                                                              .maxHeight /
+                                                          20,
+                                                    ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                          ListTile(
-                            title: Text('ddd'),
-                            subtitle: Text('dd'),
-                            // leading: Icon(CupertinoIcons.arrow),
-                            trailing: Icon(Icons.ac_unit),
+                          Divider(),
+                          Expanded(
+                            child: ListView(
+                              children:
+                                  snapshot.data!.events.reversed.map((event) {
+                                switch (event.$1) {
+                                  case e.Event.move:
+                                    return Card(
+                                      child: ListTile(
+                                        leading: Icon(Icons.directions_walk),
+                                        title: Text('Move to ${event.$2}'),
+                                      ),
+                                    );
+                                  case e.Event.scream:
+                                    return Card(
+                                      child: ListTile(
+                                        leading:
+                                            Icon(Icons.noise_aware_rounded),
+                                        title: Text(
+                                            'Wumpus\'s scream in ${event.$2}'),
+                                      ),
+                                    );
+                                  case e.Event.shoot:
+                                    return Card(
+                                      child: ListTile(
+                                        leading:
+                                            Icon(Icons.double_arrow_outlined),
+                                        title: Text(
+                                            'Shoot the arrow to ${event.$2}'),
+                                      ),
+                                    );
+                                  case e.Event.gold:
+                                    return Card(
+                                      child: ListTile(
+                                        leading:
+                                            Icon(Icons.check_circle_outline),
+                                        title:
+                                            Text('Find Gold in ${event.$2})'),
+                                      ),
+                                    );
+                                  case e.Event.death:
+                                    return Card(
+                                      child: ListTile(
+                                        leading:
+                                            Icon(Icons.check_circle_outline),
+                                        title: Text('Death in ${event.$2})'),
+                                      ),
+                                    );
+                                  default:
+                                    return Card(
+                                      child: ListTile(
+                                        leading: Icon(Icons.directions_walk),
+                                        title: Text('${event.$2}'),
+                                      ),
+                                    );
+                                }
+                              }).toList(),
+                            ),
                           ),
-                          Text('d'),
-                          Text('d'),
-                          Text('d'),
-                          Text('d'),
+                          Visibility(
+                            visible: !playing,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OutlinedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(constraints.maxWidth, 50),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    game.reset();
+                                  });
+                                },
+                                child: const Text('Refresh'),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: Size(constraints.maxWidth, 50),
+                              ),
+                              onPressed: () async {
+                                try {
+                                  setState(() {
+                                    playing = true;
+                                  });
+                                  await game.start();
+                                  // controller.agent.board.tiles
+                                  // log(controller.agent.board.toString());
+                                  setState(() {
+                                    playing = false;
+                                  });
+                                  _showDialog();
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Error!! Plz retry game.'),
+                                    ),
+                                  );
+                                  _showDialog();
+                                }
+                              },
+                              child: playing
+                                  ? CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : Text('Start Game'),
+                            ),
+                          ),
                         ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(constraints.maxWidth, 50),
-                        ),
-                        onPressed: () async {
-                          await controller.startGame();
-                          _showDialog();
-                        },
-                        child: Text('Start Game'),
-                      ),
-                    ),
-                  ],
-                );
-              }),
+                      );
+                    });
+                  }),
             ),
           ),
         ],
@@ -156,6 +365,36 @@ class _WumpusWorldState extends State<WumpusWorld> {
   }
 
   Future<void> _showDialog() async {
+    if (game.agent.giveUp) {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Discovery failed'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('A map of shapes that the Agent cannot navigate.'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('One more round'),
+                onPressed: () {
+                  setState(() {
+                    game.reset();
+                  });
+
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -165,16 +404,19 @@ class _WumpusWorldState extends State<WumpusWorld> {
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
+                Text('Agent successfully has gold in wumpus world.'),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Approve'),
+              child: const Text('One more round'),
               onPressed: () {
-                Navigator.of(context).pop(true);
+                setState(() {
+                  game.reset();
+                });
+
+                Navigator.of(context).pop();
               },
             ),
           ],

@@ -77,3 +77,11 @@ enum Danger {
   /// [State]
   unKnown,
 }
+
+enum Event {
+  move,
+  shoot,
+  scream,
+  gold,
+  death,
+}

@@ -8,7 +8,7 @@ import '../core/data/enums.dart';
 
 class Board {
   List<List<Tile>> tiles =
-      List.generate(4, (x) => List.generate(4, (y) => Tile(Point<int>(x, y))));
+      List.generate(4, (x) => List.generate(4, (y) => Tile(Position(x, y))));
 
   Board() {
     int goldRow = 3;
@@ -37,13 +37,21 @@ class Board {
     }
   }
 
+  Board.forTest() {
+    addState(3, 1, State.pitch);
+    addState(2, 2, State.pitch);
+    addState(0, 0, State.wumpus);
+    addState(1, 2, State.pitch);
+    addState(3, 3, State.gold);
+  }
+
   Board.forAgent() {
     tiles[3][0].danger = [Danger.safe];
   }
 
-  Tile getTile(Point<int> position) => tiles[position.x][position.y];
+  Tile getTile(Position position) => tiles[position.x][position.y];
 
-  List<Tile> getAroundTiles(Point<int> pos) {
+  List<Tile> getAroundTiles(Position pos) {
     List<Tile> tiles = [];
 
     for (List<int> d in dxdy) {
@@ -57,7 +65,7 @@ class Board {
 
   void addState(int x, int y, State state, {bool withAround = true}) {
     tiles[x][y].state.add(state);
-    if (stateMap.containsKey(state)) {
+    if (stateMap.containsKey(state) && withAround) {
       setAroundStateFunc(x, y, stateMap[state]!, this);
     }
   }
@@ -72,16 +80,42 @@ class Board {
   }
 
   void updateDanger(int x, int y, Danger danger) {
-    tiles[x][y].danger = [Danger.safe];
+    if (checkNotExistWumPitFunc(x, y, tiles)) {
+      tiles[x][y].danger = [Danger.safe];
+    }
     setAroundDangerFunc(x, y, danger, tiles);
   }
+
+//   @override
+//   String toString() {
+//     return '''
+// ${tiles[0][0]} | ${tiles[0][1]} | ${tiles[0][2]} | ${tiles[0][3]}
+// ${tiles[1][0]} | ${tiles[1][1]} | ${tiles[1][2]} | ${tiles[1][3]}
+// ${tiles[2][0]} | ${tiles[2][1]} | ${tiles[2][2]} | ${tiles[2][3]}
+// ${tiles[3][0]} | ${tiles[3][1]} | ${tiles[3][2]} | ${tiles[3][3]}
+// ''';
+//   }
 }
 
 class Tile {
   List<State> state = [];
   List<Danger> danger = [Danger.unKnown];
 
-  Point<int> pos;
+  Position pos;
 
   Tile(this.pos);
+
+  @override
+  String toString() {
+    return 'State : $state, Danger : $danger';
+  }
+}
+
+class Position extends Point<int> {
+  const Position(super.x, super.y);
+
+  @override
+  String toString() {
+    return '(${y + 1}, ${4 - x})';
+  }
 }

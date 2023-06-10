@@ -1,5 +1,7 @@
+// ignore_for_file: non_constant_identifier_names
+
 class Images {
-  static String _route = 'lib/assets/';
+  static const String _route = 'lib/assets/';
   static String AGENT = '${_route}agent.gif';
   static String ARROW = '${_route}arrow.png';
   static String BREEZE = '${_route}breeze.png';

@@ -3,7 +3,6 @@ import '../model/agent.dart';
 import '../model/board.dart';
 
 abstract class Controller {
-  // StreamController<Point<int>> posStream = StreamController();
   StreamController<Agent> agentStream = StreamController.broadcast();
   StreamController<Board> mapStream = StreamController();
   StreamController<List<Agent>> historyStream = StreamController();
@@ -16,20 +15,34 @@ abstract class Controller {
     agent = Agent();
     map = Board();
     agentStream.add(agent);
-    // dirStream.add(agent.dir);
     mapStream.add(map);
     historyStream.add(history);
   }
 
-  Future<void> startGame();
+  Future<void> start();
+  Future<void> reset();
 }
 
 class GameController extends Controller {
   @override
-  Future<void> startGame() async {
-    while (!agent.hasGold) {
-      await agent.search(map, mapStream);
-      await agent.move(map, agentStream, mapStream);
+  Future<void> start() async {
+    try {
+      while (!agent.hasGold) {
+        if (agent.giveUp) break;
+        await agent.search(map, mapStream, agentStream);
+        await agent.move(map, agentStream, mapStream);
+      }
+    } catch (e) {
+      rethrow;
     }
+  }
+
+  @override
+  Future<void> reset() async {
+    agent = Agent();
+    map = Board();
+    agentStream.add(agent);
+    mapStream.add(map);
+    historyStream.add(history);
   }
 }

@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:wumpus_world/core/data/enums.dart';
 
-class ArrowEastShape extends CustomPainter {
+import '../../model/agent.dart';
+
+abstract class ArrowPainter extends CustomPainter {
   late Paint painter;
+  late Agent agent;
+  Color color = Colors.green;
 
-  ArrowEastShape() {
+  ArrowPainter(Agent agent) {
+    if (agent.events.isNotEmpty && agent.events.last.$1 == Event.shoot) {
+      color = Colors.amber;
+    }
+
     painter = Paint()
-      ..color = Colors.purpleAccent
+      ..color = color
       ..style = PaintingStyle.fill;
   }
+}
+
+class ArrowEastShape extends ArrowPainter {
+  ArrowEastShape(super.agent);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -27,14 +40,8 @@ class ArrowEastShape extends CustomPainter {
   }
 }
 
-class ArrowWestShape extends CustomPainter {
-  late Paint painter;
-
-  ArrowWestShape() {
-    painter = Paint()
-      ..color = Colors.purpleAccent
-      ..style = PaintingStyle.fill;
-  }
+class ArrowWestShape extends ArrowPainter {
+  ArrowWestShape(super.agent);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -54,14 +61,8 @@ class ArrowWestShape extends CustomPainter {
   }
 }
 
-class ArrowNorthShape extends CustomPainter {
-  late Paint painter;
-
-  ArrowNorthShape() {
-    painter = Paint()
-      ..color = Colors.purpleAccent
-      ..style = PaintingStyle.fill;
-  }
+class ArrowNorthShape extends ArrowPainter {
+  ArrowNorthShape(super.agent);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -81,14 +82,8 @@ class ArrowNorthShape extends CustomPainter {
   }
 }
 
-class ArrowSouthShape extends CustomPainter {
-  late Paint painter;
-
-  ArrowSouthShape() {
-    painter = Paint()
-      ..color = Colors.purpleAccent
-      ..style = PaintingStyle.fill;
-  }
+class ArrowSouthShape extends ArrowPainter {
+  ArrowSouthShape(super.agent);
 
   @override
   void paint(Canvas canvas, Size size) {
