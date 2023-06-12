@@ -186,7 +186,12 @@ void setAroundStateFunc(
   for (List<int> d in dxdy) {
     try {
       if (remove) {
-        board.tiles[x + d[0]][y + d[1]].state.remove(state);
+        print(board.tiles[x + d[0]][y + d[1]].state);
+        print(state);
+        bool isRemoved = board.tiles[x + d[0]][y + d[1]].state.remove(state);
+        if (isRemoved && board.tiles[x + d[0]][y + d[1]].state.isEmpty) {
+          board.tiles[x + d[0]][y + d[1]].state.add(State.safe);
+        }
       } else {
         board.tiles[x + d[0]][y + d[1]].state.add(state);
       }
@@ -198,7 +203,13 @@ bool checkNotExistWumPitFunc(int x, int y, List<List<Tile>> tiles) =>
     !tiles[x][y].state.contains(State.wumpus) &&
     !tiles[x][y].state.contains(State.pitch);
 
-void setAroundDangerFunc(int x, int y, Danger danger, List<List<Tile>> tiles) {
+void setAroundDangerFunc(
+  int x,
+  int y,
+  Danger danger,
+  List<List<Tile>> tiles, {
+  bool remove = false,
+}) {
   //상하좌우 danger
   for (List<int> d in dxdy) {
     try {
@@ -208,7 +219,12 @@ void setAroundDangerFunc(int x, int y, Danger danger, List<List<Tile>> tiles) {
       } else if (tiles[x + d[0]][y + d[1]].danger.contains(Danger.unKnown)) {
         tiles[x + d[0]][y + d[1]].danger.clear();
       }
-      tiles[x + d[0]][y + d[1]].danger.add(danger);
+
+      if (remove) {
+        tiles[x + d[0]][y + d[1]].danger.remove(danger);
+      } else {
+        tiles[x + d[0]][y + d[1]].danger.add(danger);
+      }
     } catch (e) {}
   }
 }

@@ -6,9 +6,9 @@ import '../../model/board.dart';
 
 class TileElement extends StatefulWidget {
   final Tile tile;
-  bool shadow;
+  final bool shadow;
 
-  TileElement({
+  const TileElement({
     super.key,
     required this.tile,
     this.shadow = false,

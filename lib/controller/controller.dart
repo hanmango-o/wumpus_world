@@ -13,7 +13,7 @@ abstract class Controller {
 
   Controller() {
     agent = Agent();
-    map = Board();
+    map = Board.forTest();
     agentStream.add(agent);
     mapStream.add(map);
     historyStream.add(history);

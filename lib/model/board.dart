@@ -10,6 +10,11 @@ class Board {
   List<List<Tile>> tiles =
       List.generate(4, (x) => List.generate(4, (y) => Tile(Position(x, y))));
 
+  Board.forTest() {
+    addState(3, 1, State.wumpus);
+    addState(3, 2, State.pitch);
+  }
+
   Board() {
     int goldRow = 3;
     int goldCol = 0;
@@ -37,14 +42,6 @@ class Board {
     }
   }
 
-  Board.forTest() {
-    addState(3, 1, State.pitch);
-    addState(2, 2, State.pitch);
-    addState(0, 0, State.wumpus);
-    addState(1, 2, State.pitch);
-    addState(3, 3, State.gold);
-  }
-
   Board.forAgent() {
     tiles[3][0].danger = [Danger.safe];
   }
@@ -70,7 +67,7 @@ class Board {
     }
   }
 
-  bool removeState(Point<int> pos, State state) {
+  bool removeState(Position pos, State state) {
     bool isRemove = tiles[pos.x][pos.y].state.remove(state);
     if (isRemove) {
       setAroundStateFunc(pos.x, pos.y, stateMap[state]!, this, remove: true);
@@ -79,12 +76,17 @@ class Board {
     return isRemove;
   }
 
-  void updateDanger(int x, int y, Danger danger) {
+  void updateDanger(int x, int y, Danger danger, {bool remove = false}) {
     if (checkNotExistWumPitFunc(x, y, tiles)) {
       tiles[x][y].danger = [Danger.safe];
     }
-    setAroundDangerFunc(x, y, danger, tiles);
+    setAroundDangerFunc(x, y, danger, tiles, remove: remove);
   }
+
+  // void removeDanger(Position pos, Danger danger) {
+  //   tiles[pos.x][pos.y].danger.remove(danger);
+  //   setAroundDangerFunc(pos.x, pos.y, danger, tiles, remove: true);
+  // }
 
 //   @override
 //   String toString() {

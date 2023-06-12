@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:wumpus_world/controller/controller.dart';
 import 'package:wumpus_world/core/data/assets.dart';
