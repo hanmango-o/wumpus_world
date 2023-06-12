@@ -32,7 +32,7 @@ class _WumpusWorldState extends State<WumpusWorld> {
       appBar: AppBar(
         title: const Text('Wumpus World'),
         centerTitle: false,
-        backgroundColor: Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: Color.fromARGB(255, 75, 43, 220),
         // foregroundColor: Color.fromARGB(215, 135, 124, 75),
       ),
       body: Row(
@@ -42,7 +42,7 @@ class _WumpusWorldState extends State<WumpusWorld> {
             child: Container(
               height: double.infinity,
               // color: Color.fromARGB(255, 0, 0, 0),
-              color: Color.fromARGB(255, 29, 26, 20),
+              color: Color.fromARGB(255, 255, 255, 255),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return Center(
@@ -307,6 +307,8 @@ class _WumpusWorldState extends State<WumpusWorld> {
                               child: OutlinedButton(
                                 style: ElevatedButton.styleFrom(
                                   fixedSize: Size(constraints.maxWidth, 50),
+                                  foregroundColor:
+                                      Color.fromARGB(255, 75, 43, 220),
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -321,6 +323,8 @@ class _WumpusWorldState extends State<WumpusWorld> {
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color.fromARGB(255, 75, 43, 220),
                                 fixedSize: Size(constraints.maxWidth, 50),
                               ),
                               onPressed: () async {
@@ -379,6 +383,9 @@ class _WumpusWorldState extends State<WumpusWorld> {
             ),
             actions: <Widget>[
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Color.fromARGB(255, 75, 43, 220),
+                ),
                 child: const Text('One more round'),
                 onPressed: () {
                   setState(() {
@@ -408,6 +415,9 @@ class _WumpusWorldState extends State<WumpusWorld> {
           ),
           actions: <Widget>[
             TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Color.fromARGB(255, 75, 43, 220),
+              ),
               child: const Text('One more round'),
               onPressed: () {
                 setState(() {

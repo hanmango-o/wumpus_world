@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:developer' as k;
 
 import 'package:wumpus_world/core/function/functions.dart';
 
@@ -52,7 +53,19 @@ class Agent {
       await Future.delayed(const Duration(seconds: 1));
 
       if (scream) {
+        // k.log('start remove');
+        if (board.tiles[target.x][target.y].state.isEmpty) {
+          board.tiles[target.x][target.y].state.add(State.wumpus);
+        }
+
+        // board.addState(target.x, target.y, State.wumpus);
+
+        // board.tiles
+        // board.removeState(pos, State.stench);
+        // bool foo =
         board.removeState(target, State.wumpus);
+        // k.log(foo.toString());
+        // k.log('(3, 0) : ' + board.getTile(Position(3, 0)).toString());
         events.add((Event.scream, target));
         agentStream.add(this);
       }
@@ -128,6 +141,18 @@ class Agent {
 
     List<Position> path = getNavigatedPathFunc(pos, target.$2, board);
 
+    if (hasGold) {
+      board.tiles.forEach((List<Tile> row) {
+        row.forEach((tile) {
+          if (tile.danger.contains(Danger.safe)) {
+            tile.state.add(State.safe);
+          }
+        });
+      });
+    }
+
+    agentStream.add(this);
+
     for (int i = 0; i < path.length; i++) {
       await setDirection(getDirectionFunc(pos, path[i]), agentStream);
       if (target.$1 == Danger.wumpus && i == path.length - 1) {
@@ -135,9 +160,14 @@ class Agent {
         // print(scream);
         // print(board.getTile(Position(0, 0)).toString());
         // print(pos);
+        // k.log(pos.toString());
+        // k.log(board.getTile(pos).toString());
+
+        // k.log(board.getTile(pos).state.contains(State.stench).toString());
         if (scream && !board.getTile(pos).state.contains(State.stench)) {
-          // print('aaaa');
-          board.updateDanger(pos.x, pos.y, Danger.safe, remove: true);
+          // print('aaaa');]
+          // stenchfㅡㄹ 없애고
+          board.updateDanger(pos.x, pos.y, Danger.wumpus, remove: true);
         }
         mapStream.add(oBoard);
         await Future.delayed(const Duration(seconds: 1));

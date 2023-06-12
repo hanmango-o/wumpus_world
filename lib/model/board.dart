@@ -13,6 +13,7 @@ class Board {
   Board.forTest() {
     addState(3, 1, State.wumpus);
     addState(3, 2, State.pitch);
+    addState(2, 0, State.pitch);
   }
 
   Board() {
@@ -67,7 +68,7 @@ class Board {
     }
   }
 
-  bool removeState(Position pos, State state) {
+  bool removeState(Position pos, State state, {bool only = true}) {
     bool isRemove = tiles[pos.x][pos.y].state.remove(state);
     if (isRemove) {
       setAroundStateFunc(pos.x, pos.y, stateMap[state]!, this, remove: true);

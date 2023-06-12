@@ -25,9 +25,11 @@ class _TileElementState extends State<TileElement> {
       color: widget.shadow
           ? widget.tile.danger.contains(e.Danger.safe) ||
                   widget.tile.danger.contains(e.Danger.gold)
-              ? null
-              : Color.fromARGB(108, 0, 0, 0)
-          : Color.fromARGB(255, 146, 124, 72),
+              ? widget.tile.state.isNotEmpty
+                  ? Color.fromARGB(78, 64, 0, 255)
+                  : null
+              : Color.fromARGB(99, 0, 0, 0)
+          : Color.fromARGB(255, 216, 203, 255),
       child: widget.shadow
           ? SizedBox()
           : Column(

@@ -186,8 +186,6 @@ void setAroundStateFunc(
   for (List<int> d in dxdy) {
     try {
       if (remove) {
-        print(board.tiles[x + d[0]][y + d[1]].state);
-        print(state);
         bool isRemoved = board.tiles[x + d[0]][y + d[1]].state.remove(state);
         if (isRemoved && board.tiles[x + d[0]][y + d[1]].state.isEmpty) {
           board.tiles[x + d[0]][y + d[1]].state.add(State.safe);
@@ -222,6 +220,9 @@ void setAroundDangerFunc(
 
       if (remove) {
         tiles[x + d[0]][y + d[1]].danger.remove(danger);
+        if (tiles[x + d[0]][y + d[1]].danger.isEmpty) {
+          tiles[x + d[0]][y + d[1]].danger.add(Danger.safe);
+        }
       } else {
         tiles[x + d[0]][y + d[1]].danger.add(danger);
       }
