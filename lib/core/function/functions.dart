@@ -16,14 +16,14 @@ const List<List<int>> dxdy = [
 const Map<State, State> stateMap = {
   State.wumpus: State.stench,
   State.pitch: State.breeze,
-  State.gold: State.glitter,
+  // State.gold: State.glitter,
 };
 
 const Map<State, Danger> dangerMap = {
   State.safe: Danger.safe,
   State.stench: Danger.wumpus,
   State.breeze: Danger.pitch,
-  State.glitter: Danger.gold,
+  // State.glitter: Danger.gold,
 };
 
 (Danger, Position) getPossiblePosFunc(Board board, Position pos) {

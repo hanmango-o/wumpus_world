@@ -11,9 +11,12 @@ class Board {
       List.generate(4, (x) => List.generate(4, (y) => Tile(Position(x, y))));
 
   Board.forTest() {
-    addState(3, 1, State.wumpus);
+    // addState(3, 1, State.wumpus);
+    addState(3, 3, State.gold);
+    addState(3, 1, State.pitch);
     addState(3, 2, State.pitch);
     addState(2, 0, State.pitch);
+    addState(2, 3, State.pitch);
   }
 
   Board() {

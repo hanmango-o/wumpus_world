@@ -41,8 +41,6 @@ class _TileElementState extends State<TileElement> {
                       return Flexible(child: Image.asset(Images.WUMPUS));
                     case e.State.pitch:
                       return Flexible(child: Image.asset(Images.PITCH));
-                    case e.State.glitter:
-                      return Flexible(child: Image.asset(Images.GLITTER));
                     case e.State.gold:
                       return Flexible(child: Image.asset(Images.GOLD));
                     case e.State.stench:

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:developer' as k;
 
 import 'package:wumpus_world/core/function/functions.dart';
 
@@ -53,19 +52,11 @@ class Agent {
       await Future.delayed(const Duration(seconds: 1));
 
       if (scream) {
-        // k.log('start remove');
         if (board.tiles[target.x][target.y].state.isEmpty) {
           board.tiles[target.x][target.y].state.add(State.wumpus);
         }
 
-        // board.addState(target.x, target.y, State.wumpus);
-
-        // board.tiles
-        // board.removeState(pos, State.stench);
-        // bool foo =
         board.removeState(target, State.wumpus);
-        // k.log(foo.toString());
-        // k.log('(3, 0) : ' + board.getTile(Position(3, 0)).toString());
         events.add((Event.scream, target));
         agentStream.add(this);
       }
@@ -87,7 +78,6 @@ class Agent {
     Tile oTile = oBoard.getTile(pos);
     Tile cTile = board.getTile(pos);
 
-    // if (cTile.state.isEmpty) {
     if (oTile.state.isEmpty) {
       board.addState(pos.x, pos.y, State.safe, withAround: false);
     } else {
@@ -96,7 +86,6 @@ class Agent {
       }
     }
     cTile = board.getTile(pos);
-    // }
 
     cTile.state.toSet().forEach((state) async {
       switch (state) {
